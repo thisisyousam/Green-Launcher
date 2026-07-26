@@ -1,0 +1,140 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:GreenLauncher"
+        x:Class="GreenLauncher.MainWindow"
+        x:CompileBindings="True"
+        Title="Green Launcher"
+        Width="420" Height="640"
+        CanResize="False"
+        Background="Transparent">
+
+    <Border Background="{DynamicResource BgBrush}">
+        <Border.Transitions>
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15" />
+            </Transitions>
+        </Border.Transitions>
+
+        <Grid Margin="24" RowDefinitions="48,*">
+
+            <!-- 상단바 (로그인/메인 화면 공통) -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" Text="Green Launcher" FontSize="22" FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+
+                <Button Grid.Column="1" x:Name="ThemeToggleButton" Width="32" Height="32" Padding="0"
+                        Background="Transparent" BorderThickness="0" Click="OnThemeToggleClick">
+                    <Canvas Width="18" Height="18">
+                        <Ellipse x:Name="SunIcon" Canvas.Left="5.5" Canvas.Top="5.5" Width="7" Height="7"
+                                 Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="1.4" Fill="Transparent" />
+                        <Path x:Name="SunRays"
+                              Data="M14.5,9 L16.5,9 M12.89,12.89 L14.30,14.30 M9,14.5 L9,16.5 M5.11,12.89 L3.70,14.30 M3.5,9 L1.5,9 M5.11,5.11 L3.70,3.70 M9,3.5 L9,1.5 M12.89,5.11 L14.30,3.70"
+                              Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="1.4" StrokeLineCap="Round" />
+                        <Path x:Name="MoonIcon" IsVisible="False"
+                              Data="M 12 3.5 A 6 6 0 1 0 12 14.5"
+                              Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="1.4"
+                              StrokeLineCap="Round" Fill="Transparent" />
+                    </Canvas>
+                </Button>
+            </Grid>
+
+            <!-- ===== 로그인 화면 ===== -->
+            <StackPanel Grid.Row="1" x:Name="LoginScreen" VerticalAlignment="Center" Spacing="16">
+                <TextBlock Text="Minecraft를 실행하려면 Microsoft 계정 로그인이 필요합니다" FontSize="14"
+                           TextAlignment="Center" TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextSecondaryBrush}" />
+
+                <Button x:Name="LoginButton" Content="Microsoft로 로그인" Height="40"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Background="{DynamicResource AccentBrush}" Foreground="{DynamicResource AccentTextBrush}"
+                        CornerRadius="8" FontWeight="Medium" Click="OnLoginClick" />
+
+                <TextBlock x:Name="LoginStatusText" Text="" FontSize="12" TextAlignment="Center" TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextSecondaryBrush}" />
+            </StackPanel>
+
+            <!-- ===== 메인 화면 ===== -->
+            <Grid Grid.Row="1" x:Name="MainScreen" IsVisible="False" RowDefinitions="Auto,Auto,*,Auto,Auto">
+
+                <!-- 계정 영역 -->
+                <Button Grid.Row="0" x:Name="AccountButton" Padding="0"
+                        Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left"
+                        HorizontalAlignment="Stretch" Click="OnAccountClick">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Border Width="40" Height="40" CornerRadius="20" ClipToBounds="True"
+                                Background="{DynamicResource BorderBrush2}">
+                            <Grid>
+                                <Path x:Name="AvatarPlaceholder" Width="18" Height="18" Stretch="Uniform"
+                                      Data="M12,4 A4,4 0 1 0 12,12 A4,4 0 1 0 12,4 Z M4,20 A8,7 0 0 1 20,20"
+                                      Stroke="{DynamicResource TextSecondaryBrush}" StrokeThickness="1.4" Fill="Transparent" />
+                                <Image x:Name="AvatarImage" Stretch="UniformToFill" IsVisible="False" />
+                            </Grid>
+                        </Border>
+                        <StackPanel Spacing="2" VerticalAlignment="Center">
+                            <TextBlock x:Name="NicknameText" Text="" FontSize="14" FontWeight="Medium"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <TextBlock x:Name="AccountStatusText" Text="Microsoft 계정" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Button>
+
+                <!-- 버전/모드 카드 -->
+                <Border Grid.Row="1" Margin="0,16,0,0" Background="{DynamicResource SurfaceBrush}"
+                        BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1" CornerRadius="10" Padding="16">
+                    <Border.Transitions>
+                        <Transitions>
+                            <BrushTransition Property="Background" Duration="0:0:0.15" />
+                        </Transitions>
+                    </Border.Transitions>
+                    <StackPanel Spacing="12">
+                        <TextBlock x:Name="VersionInfoText" Text="Minecraft ―  Fabric ―" FontSize="12"
+                                   FontFamily="{StaticResource MonoFont}" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <ItemsControl x:Name="ModListItems">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="local:ModEntry">
+                                    <Grid ColumnDefinitions="*,Auto" Margin="0,4">
+                                        <TextBlock Grid.Column="0" Text="{Binding name}" FontSize="14"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding version}" FontSize="12"
+                                                   FontFamily="{StaticResource MonoFont}"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- 로그 (스펙엔 없지만 디버그용으로 작게 유지) -->
+                <Border Grid.Row="2" Margin="0,16,0,0" Background="{DynamicResource SurfaceBrush}"
+                        BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1" CornerRadius="10">
+                    <ScrollViewer x:Name="LogScroll">
+                        <TextBox x:Name="LogBox" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
+                                 BorderThickness="0" Background="Transparent" FontSize="11"
+                                 FontFamily="{StaticResource MonoFont}" Foreground="{DynamicResource TextSecondaryBrush}" />
+                    </ScrollViewer>
+                </Border>
+
+                <!-- 진행바: 다운로드/설치 중일 때만 노출 -->
+                <Grid Grid.Row="3" x:Name="ProgressPanel" Margin="0,16,0,0" IsVisible="False" RowDefinitions="Auto,Auto">
+                    <TextBlock Grid.Row="0" x:Name="ProgressStatusText" Text="" FontSize="12" Margin="0,0,0,6"
+                               Foreground="{DynamicResource TextSecondaryBrush}" />
+                    <Grid Grid.Row="1" Height="18">
+                        <ProgressBar x:Name="Progress" Minimum="0" Maximum="100" Height="6" VerticalAlignment="Center"
+                                     Background="{DynamicResource BorderBrush2}" Foreground="{DynamicResource AccentBrush}" />
+                        <TextBlock x:Name="ProgressPercentText" Text="0%" FontSize="11"
+                                   FontFamily="{StaticResource MonoFont}" HorizontalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" />
+                    </Grid>
+                </Grid>
+
+                <!-- 플레이 버튼 -->
+                <Button Grid.Row="4" x:Name="PlayButton" Content="플레이" Margin="0,16,0,0" Height="40"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Background="{DynamicResource AccentBrush}" Foreground="{DynamicResource AccentTextBrush}"
+                        CornerRadius="8" FontWeight="Medium" Click="OnPlayClick" />
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

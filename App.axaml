@@ -1,0 +1,46 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="GreenLauncher.App"
+             RequestedThemeVariant="Default">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="BgBrush">#F7F8F5</SolidColorBrush>
+                    <SolidColorBrush x:Key="SurfaceBrush">#FFFFFF</SolidColorBrush>
+                    <SolidColorBrush x:Key="BorderBrush2">#E2E5DD</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextPrimaryBrush">#1C1E1A</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextSecondaryBrush">#6B7268</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentBrush">#8BC53F</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentHoverBrush">#79AF35</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentTextBrush">#1C2410</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="BgBrush">#14160F</SolidColorBrush>
+                    <SolidColorBrush x:Key="SurfaceBrush">#1D2018</SolidColorBrush>
+                    <SolidColorBrush x:Key="BorderBrush2">#2C3024</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextPrimaryBrush">#EDEFE8</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextSecondaryBrush">#9CA394</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentBrush">#A3D65C</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentHoverBrush">#B4E272</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentTextBrush">#14180B</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+
+            <FontFamily x:Key="BodyFont">avares://GreenLauncher/Assets/Fonts#Pretendard</FontFamily>
+            <FontFamily x:Key="MonoFont">avares://GreenLauncher/Assets/Fonts#JetBrains Mono</FontFamily>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <Style Selector="Window">
+            <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+            <Setter Property="FontWeight" Value="Medium" />
+        </Style>
+    </Application.Styles>
+</Application>
