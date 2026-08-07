@@ -71,6 +71,36 @@ public class LauncherService
         return session;
     }
 
+    // MojangAPI 1.2.1의 Mojang.GetProfileUsingUUID는 textures.SKIN.metadata를 무조건
+    // GetProperty로 읽는다 — 클래식(Steve) 스킨은 metadata 자체가 없어서(슬림일 때만
+    // 존재) 거기서 예외가 나고, 그 예외의 catch 블록이 방금 읽어둔 URL까지 통째로
+    // null로 덮어써 버린다. 그래서 라이브러리를 거치지 않고 세션서버 응답을 직접
+    // 받아서 파싱한다 — metadata는 TryGetProperty로 있으면만 읽는다.
+    public async Task<(string? Url, bool IsSlim)> GetSkinUrlAsync(string uuid)
+    {
+        using var http = new HttpClient();
+        var response = await http.GetAsync($"https://sessionserver.mojang.com/session/minecraft/profile/{uuid}");
+        if (!response.IsSuccessStatusCode) return (null, false);
+
+        using var doc = System.Text.Json.JsonDocument.Parse(await response.Content.ReadAsStreamAsync());
+        if (!doc.RootElement.TryGetProperty("properties", out var properties) || properties.GetArrayLength() == 0)
+            return (null, false);
+
+        var texturesBase64 = properties[0].GetProperty("value").GetString();
+        if (texturesBase64 is null) return (null, false);
+
+        using var texturesDoc = System.Text.Json.JsonDocument.Parse(Convert.FromBase64String(texturesBase64));
+        if (!texturesDoc.RootElement.GetProperty("textures").TryGetProperty("SKIN", out var skin))
+            return (null, false);
+
+        var url = skin.GetProperty("url").GetString();
+        var isSlim = skin.TryGetProperty("metadata", out var metadata)
+            && metadata.TryGetProperty("model", out var model)
+            && model.GetString() == "slim";
+
+        return (url, isSlim);
+    }
+
     public async Task<string> InstallFabricAsync()
     {
         var fabricInstaller = new FabricInstaller(new HttpClient());
@@ -109,12 +139,12 @@ public class LauncherService
         }
     }
 
-    public async Task LaunchGameAsync(string fabricVersionName, MSession session)
+    public async Task LaunchGameAsync(string fabricVersionName, MSession session, int maxRamMb = 4096)
     {
         var launchOption = new MLaunchOption
         {
             Session = session,
-            MaximumRamMb = 4096
+            MaximumRamMb = maxRamMb
         };
 
         await Launcher.InstallAsync(fabricVersionName);

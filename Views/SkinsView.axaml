@@ -1,0 +1,103 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:GreenLauncher.Views"
+             xmlns:rendering="clr-namespace:GreenLauncher.Rendering"
+             x:Class="GreenLauncher.Views.SkinsView"
+             x:CompileBindings="True">
+    <ScrollViewer>
+        <StackPanel Spacing="24">
+
+            <!-- 미리보기: OpenGL 3D 렌더링 가능하면 전신 모델 + 드래그 회전/휠 줌,
+                 실패 시(컨텍스트 생성 불가 등) 기존 2D 얼굴 크롭 방식으로 폴백 -->
+            <Border CornerRadius="16" Height="480" BoxShadow="{DynamicResource CardShadow}" ClipToBounds="True">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                        <GradientStop Color="#7EC6E6" Offset="0" />
+                        <GradientStop Color="#A9DCED" Offset="0.55" />
+                        <GradientStop Color="#5A9C37" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Border x:Name="SkinPreviewFace" Width="120" Height="120" CornerRadius="14"
+                            Background="#33FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            ClipToBounds="True">
+                        <Grid>
+                            <Path x:Name="SkinPreviewPlaceholder" Width="48" Height="48" Stretch="Uniform"
+                                  Data="M12,4 A4,4 0 1 0 12,12 A4,4 0 1 0 12,4 Z M4,20 A8,7 0 0 1 20,20"
+                                  Stroke="White" StrokeThickness="1.4" Fill="Transparent" />
+                            <Image x:Name="SkinPreviewImage" Stretch="Uniform" IsVisible="False"
+                                   RenderOptions.BitmapInterpolationMode="None" />
+                        </Grid>
+                    </Border>
+                    <rendering:SkinViewerControl x:Name="SkinViewer3D" HeadOnly="False" IsVisible="False" />
+                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,20" Spacing="8">
+                        <TextBlock x:Name="SkinPreviewName" Text="기본 (Steve)" FontSize="18" FontWeight="SemiBold" Foreground="#12210A" />
+                        <Border Background="#BFFFFFFF" CornerRadius="999" Padding="10,3" HorizontalAlignment="Left">
+                            <TextBlock Text="적용중" FontSize="11" FontWeight="SemiBold" Foreground="#3D6B1A" />
+                        </Border>
+                    </StackPanel>
+                    <!-- SkinViewer3D(OpenGlControlBase)는 GPU 합성 서피스라 자체적으로
+                         PointerPressed/Moved를 못 받아서, 투명한 오버레이가 대신 입력을
+                         받아 SkinViewer3D.ApplyDrag/ApplyZoom으로 전달한다. -->
+                    <Border x:Name="SkinViewerInteractionOverlay" Background="Transparent" Cursor="Hand" IsVisible="False" />
+                </Grid>
+            </Border>
+
+            <!-- 팔 두께(모델 타입) — 로그인 계정 스킨은 Mojang 프로필값으로 자동
+                 판정되지만, 업로드한 스킨은 알 수 없어 기본 클래식(4px)으로 두고
+                 여기서 직접 바꿀 수 있게 한다. -->
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="슬림 팔(3px)" FontSize="13" FontWeight="SemiBold"
+                           VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
+                <Button x:Name="SlimArmToggleButton" Background="Transparent" BorderThickness="0"
+                        Padding="0" VerticalAlignment="Center" Click="OnSlimArmToggleClick" CornerRadius="99999">
+                    <Border Width="42" Height="24" CornerRadius="99999" Background="{DynamicResource ToggleTrackBrush}" Cursor="Hand">
+                        <Border x:Name="SlimArmToggleThumb" Width="18" Height="18" CornerRadius="18"
+                                Background="{DynamicResource ToggleThumbBrush}" HorizontalAlignment="Left" Margin="3,0,0,0">
+                            <Border.Transitions>
+                                <Transitions>
+                                    <ThicknessTransition Property="Margin" Duration="0:0:0.15" />
+                                </Transitions>
+                            </Border.Transitions>
+                        </Border>
+                    </Border>
+                </Button>
+            </StackPanel>
+
+            <!-- 목록 -->
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" Text="스킨 목록" FontSize="18" FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextPrimaryBrush}" />
+                <Button Grid.Column="1" Content="+ 스킨 업로드" Background="{DynamicResource AccentBrush}"
+                        Foreground="{DynamicResource AccentTextBrush}" FontSize="13" FontWeight="SemiBold"
+                        Padding="18,9" CornerRadius="999" Click="OnUploadClick" />
+            </Grid>
+            <ItemsControl x:Name="SkinListItems">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="10" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="views:SkinItem">
+                        <Button Tag="{Binding}" Click="OnSkinItemClick"
+                                Background="{DynamicResource SurfaceBrush}" BorderBrush="{Binding BorderBrush}" BorderThickness="2"
+                                CornerRadius="14" Padding="16,12" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left">
+                            <Grid ColumnDefinitions="38,*,Auto">
+                                <Border Grid.Column="0" Width="34" Height="34" CornerRadius="8" ClipToBounds="True"
+                                        Background="{DynamicResource HeroBrush}">
+                                    <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" IsVisible="{Binding HasThumbnail}"
+                                           RenderOptions.BitmapInterpolationMode="None" />
+                                </Border>
+                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="13.5" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" Margin="14,0" />
+                                <TextBlock Grid.Column="2" Text="{Binding StatusLabel}" FontSize="11" FontWeight="SemiBold"
+                                           Foreground="{Binding StatusForeground}" VerticalAlignment="Center" />
+                            </Grid>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

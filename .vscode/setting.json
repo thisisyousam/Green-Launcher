@@ -1,0 +1,6 @@
+{
+  "[axaml]": {
+    "editor.defaultFormatter": "dabbinavo.xamlstyler",
+    "editor.formatOnSave": true
+  }
+}

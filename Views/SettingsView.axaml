@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="GreenLauncher.Views.SettingsView"
+             x:CompileBindings="True">
+    <StackPanel Spacing="20" MaxWidth="520" HorizontalAlignment="Left">
+        <TextBlock Text="설정" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
+
+        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="14" Padding="20,18"
+                BoxShadow="{DynamicResource CardShadow}">
+            <StackPanel Spacing="12">
+                <TextBlock Text="메모리 할당" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                <Grid ColumnDefinitions="*,Auto">
+                    <Slider Grid.Column="0" x:Name="MemorySlider" Minimum="1" Maximum="16" Value="6" TickFrequency="1"
+                             IsSnapToTickEnabled="True" ValueChanged="OnMemoryChanged" />
+                    <TextBlock Grid.Column="1" x:Name="MemoryLabelText" Text="6GB" FontSize="13" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" Width="44" TextAlignment="Right"
+                               VerticalAlignment="Center" Margin="14,0,0,0" />
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="14" Padding="20,18"
+                BoxShadow="{DynamicResource CardShadow}">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Java 경로" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                <TextBox x:Name="JavaPathText" IsReadOnly="True" FontSize="13" FontFamily="{StaticResource MonoFont}"
+                         Foreground="{DynamicResource TextSecondaryBrush}" Background="{DynamicResource BgBrush}"
+                         BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1" CornerRadius="8" Padding="10,10" />
+            </StackPanel>
+        </Border>
+
+        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="14" Padding="20,18"
+                BoxShadow="{DynamicResource CardShadow}">
+            <StackPanel Spacing="10">
+                <TextBlock Text="게임 디렉토리" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                <TextBox x:Name="GameDirText" IsReadOnly="True" FontSize="13" FontFamily="{StaticResource MonoFont}"
+                         Foreground="{DynamicResource TextSecondaryBrush}" Background="{DynamicResource BgBrush}"
+                         BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1" CornerRadius="8" Padding="10,10" />
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

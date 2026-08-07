@@ -1,12 +1,26 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:GreenLauncher"
-        x:Class="GreenLauncher.MainWindow"
-        x:CompileBindings="True"
-        Title="Green Launcher"
-        Width="420" Height="640"
-        CanResize="False"
-        Background="Transparent">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:GreenLauncher"
+    xmlns:views="clr-namespace:GreenLauncher.Views"
+    xmlns:rendering="clr-namespace:GreenLauncher.Rendering"
+    x:Class="GreenLauncher.MainWindow"
+    x:CompileBindings="True"
+    Title="Green Launcher"
+    Width="1280" Height="800" MinWidth="960" MinHeight="600"
+    CanResize="True"
+    Background="Transparent">
+
+    <Window.Styles>
+        <Style Selector="Button.nav">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="12" />
+            <Setter Property="Margin" Value="0,1" />
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Styles>
 
     <Border Background="{DynamicResource BgBrush}">
         <Border.Transitions>
@@ -15,125 +29,161 @@
             </Transitions>
         </Border.Transitions>
 
-        <Grid Margin="24" RowDefinitions="48,*">
-
-            <!-- 상단바 (로그인/메인 화면 공통) -->
-            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
-                <TextBlock Grid.Column="0" Text="Green Launcher" FontSize="22" FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
-
-                <Button Grid.Column="1" x:Name="ThemeToggleButton" Width="32" Height="32" Padding="0"
-                        Background="Transparent" BorderThickness="0" Click="OnThemeToggleClick">
-                    <Canvas Width="18" Height="18">
-                        <Ellipse x:Name="SunIcon" Canvas.Left="5.5" Canvas.Top="5.5" Width="7" Height="7"
-                                 Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="1.4" Fill="Transparent" />
-                        <Path x:Name="SunRays"
-                              Data="M14.5,9 L16.5,9 M12.89,12.89 L14.30,14.30 M9,14.5 L9,16.5 M5.11,12.89 L3.70,14.30 M3.5,9 L1.5,9 M5.11,5.11 L3.70,3.70 M9,3.5 L9,1.5 M12.89,5.11 L14.30,3.70"
-                              Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="1.4" StrokeLineCap="Round" />
-                        <Path x:Name="MoonIcon" IsVisible="False"
-                              Data="M 12 3.5 A 6 6 0 1 0 12 14.5"
-                              Stroke="{DynamicResource TextPrimaryBrush}" StrokeThickness="1.4"
-                              StrokeLineCap="Round" Fill="Transparent" />
-                    </Canvas>
-                </Button>
-            </Grid>
+        <Grid>
 
             <!-- ===== 로그인 화면 ===== -->
-            <StackPanel Grid.Row="1" x:Name="LoginScreen" VerticalAlignment="Center" Spacing="16">
-                <TextBlock Text="Minecraft를 실행하려면 Microsoft 계정 로그인이 필요합니다" FontSize="14"
-                           TextAlignment="Center" TextWrapping="Wrap"
-                           Foreground="{DynamicResource TextSecondaryBrush}" />
+            <StackPanel x:Name="LoginScreen" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Width="360" Spacing="16">
+                <Image Source="/Assets/green_200.png" Width="200"/>    
+            
+                <TextBlock Text="Minecraft를 실행하려면 Microsoft 계정 로그인이 필요합니다"
+                        FontSize="14"
+                        TextAlignment="Center" TextWrapping="Wrap"
+                        Foreground="{DynamicResource TextSecondaryBrush}" />
 
-                <Button x:Name="LoginButton" Content="Microsoft로 로그인" Height="40"
+                    <Button x:Name="LoginButton" Height="44"
                         HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                        Background="{DynamicResource AccentBrush}" Foreground="{DynamicResource AccentTextBrush}"
-                        CornerRadius="8" FontWeight="Medium" Click="OnLoginClick" />
+                        VerticalContentAlignment="Center"
+                        Background="#F2F7EA" BorderBrush="#EAF2DD" Foreground="#E6F7CA"
+                        CornerRadius="8" FontWeight="SemiBold" FontSize="14"
+                        Cursor="Hand" Click="OnLoginClick">
+
+                        <Button.Styles>
+                            <Style Selector="Button">
+                                <Setter Property="Transitions">
+                                    <Transitions>
+                                        <BrushTransition Property="Background" Duration="0:0:0.15" />
+                                    </Transitions>
+                                </Setter>
+                            </Style>
+                            <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                <Setter Property="Background" Value="#E2F1CB" />
+                            </Style>
+                        </Button.Styles>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image Source="/Assets/ms_logo.png" Width="18" Height="18" />
+                            <TextBlock Text="Microsoft로 로그인"
+                                FontWeight="SemiBold" FontSize="14"
+                                Foreground="{DynamicResource AccentTextBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
 
                 <TextBlock x:Name="LoginStatusText" Text="" FontSize="12" TextAlignment="Center" TextWrapping="Wrap"
-                           Foreground="{DynamicResource TextSecondaryBrush}" />
+                    Foreground="{DynamicResource TextSecondaryBrush}" />
             </StackPanel>
 
-            <!-- ===== 메인 화면 ===== -->
-            <Grid Grid.Row="1" x:Name="MainScreen" IsVisible="False" RowDefinitions="Auto,Auto,*,Auto,Auto">
 
-                <!-- 계정 영역 -->
-                <Button Grid.Row="0" x:Name="AccountButton" Padding="0"
-                        Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left"
-                        HorizontalAlignment="Stretch" Click="OnAccountClick">
-                    <StackPanel Orientation="Horizontal" Spacing="12">
-                        <Border Width="40" Height="40" CornerRadius="20" ClipToBounds="True"
-                                Background="{DynamicResource BorderBrush2}">
-                            <Grid>
-                                <Path x:Name="AvatarPlaceholder" Width="18" Height="18" Stretch="Uniform"
-                                      Data="M12,4 A4,4 0 1 0 12,12 A4,4 0 1 0 12,4 Z M4,20 A8,7 0 0 1 20,20"
-                                      Stroke="{DynamicResource TextSecondaryBrush}" StrokeThickness="1.4" Fill="Transparent" />
-                                <Image x:Name="AvatarImage" Stretch="UniformToFill" IsVisible="False" />
-                            </Grid>
-                        </Border>
-                        <StackPanel Spacing="2" VerticalAlignment="Center">
-                            <TextBlock x:Name="NicknameText" Text="" FontSize="14" FontWeight="Medium"
-                                       Foreground="{DynamicResource TextPrimaryBrush}" />
-                            <TextBlock x:Name="AccountStatusText" Text="Microsoft 계정" FontSize="12"
-                                       Foreground="{DynamicResource TextSecondaryBrush}" />
-                        </StackPanel>
-                    </StackPanel>
-                </Button>
+            
+            <!-- ===== 메인 셸 ===== -->
+            <Grid Grid.Row="1">
+                <Grid x:Name="Shell" IsVisible="False" ColumnDefinitions="240,*">
 
-                <!-- 버전/모드 카드 -->
-                <Border Grid.Row="1" Margin="0,16,0,0" Background="{DynamicResource SurfaceBrush}"
-                        BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1" CornerRadius="10" Padding="16">
-                    <Border.Transitions>
-                        <Transitions>
-                            <BrushTransition Property="Background" Duration="0:0:0.15" />
-                        </Transitions>
-                    </Border.Transitions>
-                    <StackPanel Spacing="12">
-                        <TextBlock x:Name="VersionInfoText" Text="Minecraft ―  Fabric ―" FontSize="12"
-                                   FontFamily="{StaticResource MonoFont}" Foreground="{DynamicResource TextSecondaryBrush}" />
-                        <ItemsControl x:Name="ModListItems">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate x:DataType="local:ModEntry">
-                                    <Grid ColumnDefinitions="*,Auto" Margin="0,4">
-                                        <TextBlock Grid.Column="0" Text="{Binding name}" FontSize="14"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}" />
-                                        <TextBlock Grid.Column="1" Text="{Binding version}" FontSize="12"
-                                                   FontFamily="{StaticResource MonoFont}"
-                                                   Foreground="{DynamicResource TextSecondaryBrush}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
+                    <!-- 사이드바 -->
+                    <Border Grid.Column="0" Background="{DynamicResource SidebarBrush}"
+                            BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="0,0,1,0">
+                        <Grid RowDefinitions="*,Auto,Auto" Margin="10,18">
+                            <StackPanel Grid.Row="0" Spacing="4">
 
-                <!-- 로그 (스펙엔 없지만 디버그용으로 작게 유지) -->
-                <Border Grid.Row="2" Margin="0,16,0,0" Background="{DynamicResource SurfaceBrush}"
-                        BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1" CornerRadius="10">
-                    <ScrollViewer x:Name="LogScroll">
-                        <TextBox x:Name="LogBox" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
-                                 BorderThickness="0" Background="Transparent" FontSize="11"
-                                 FontFamily="{StaticResource MonoFont}" Foreground="{DynamicResource TextSecondaryBrush}" />
-                    </ScrollViewer>
-                </Border>
+                                <StackPanel VerticalAlignment="Center" Margin="0,0,0,16">                                    
+                                    <Image Source="/Assets/green_100.png" Width="48"/> 
+                                </StackPanel>
 
-                <!-- 진행바: 다운로드/설치 중일 때만 노출 -->
-                <Grid Grid.Row="3" x:Name="ProgressPanel" Margin="0,16,0,0" IsVisible="False" RowDefinitions="Auto,Auto">
-                    <TextBlock Grid.Row="0" x:Name="ProgressStatusText" Text="" FontSize="12" Margin="0,0,0,6"
-                               Foreground="{DynamicResource TextSecondaryBrush}" />
-                    <Grid Grid.Row="1" Height="18">
-                        <ProgressBar x:Name="Progress" Minimum="0" Maximum="100" Height="6" VerticalAlignment="Center"
-                                     Background="{DynamicResource BorderBrush2}" Foreground="{DynamicResource AccentBrush}" />
-                        <TextBlock x:Name="ProgressPercentText" Text="0%" FontSize="11"
-                                   FontFamily="{StaticResource MonoFont}" HorizontalAlignment="Center"
-                                   Foreground="{DynamicResource TextPrimaryBrush}" />
+                                <Button x:Name="NavHomeButton" Classes="nav" Click="OnNavHomeClick">
+                                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                        <Path x:Name="NavHomeIcon" Width="16" Height="16" Stretch="Uniform"
+                                            Data="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z m0.53 1.591 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z"
+                                            Fill="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock x:Name="NavHomeLabel" Text="홈" FontSize="13" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button x:Name="NavSkinsButton" Classes="nav" Click="OnNavSkinsClick">
+                                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                            <Path x:Name="NavSkinsIcon" Width="16" Height="16" Stretch="Uniform"
+                                                Data="F0 M20.599 1.5c-.376 0-.743.111-1.055.32l-5.08 3.385a18.747 18.747 0 0 0-3.471 2.987 10.04 10.04 0 0 1 4.815 4.815 18.748 18.748 0 0 0 2.987-3.472l3.386-5.079A1.902 1.902 0 0 0 20.599 1.5Zm-8.3 14.025a18.76 18.76 0 0 0 1.896-1.207 8.026 8.026 0 0 0-4.513-4.513A18.75 18.75 0 0 0 8.475 11.7l-.278.5a5.26 5.26 0 0 1 3.601 3.602l.502-.278ZM6.75 13.5A3.75 3.75 0 0 0 3 17.25a1.5 1.5 0 0 1-1.601 1.497.75.75 0 0 0-.7 1.123 5.25 5.25 0 0 0 9.8-2.62 3.75 3.75 0 0 0-3.75-3.75Z"
+                                                Fill="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock x:Name="NavSkinsLabel" Text="스킨" FontSize="13" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button x:Name="NavAccountButton" Classes="nav" Click="OnNavAccountClick">
+                                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                        <Path x:Name="NavAccountIcon" Width="16" Height="16" Stretch="Uniform"
+                                            Data="F0 M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+                                            Fill="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock x:Name="NavAccountLabel" Text="계정" FontSize="13" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button x:Name="NavSettingsButton" Classes="nav" Click="OnNavSettingsClick">
+                                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                        <Path x:Name="NavSettingsIcon" Width="16" Height="16" Stretch="Uniform"
+                                            Data="F0 M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 0 0-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 0 0-2.282.819l-.922 1.597a1.875 1.875 0 0 0 .432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 0 0 0 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 0 0-.432 2.385l.922 1.597a1.875 1.875 0 0 0 2.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 0 0 2.28-.819l.923-1.597a1.875 1.875 0 0 0-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 0 0 0-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 0 0-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 0 0-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 0 0-1.85-1.567h-1.843ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z"
+                                            Fill="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock x:Name="NavSettingsLabel" Text="설정" FontSize="13" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Button>
+
+                            </StackPanel>
+
+                            <!-- 다크/라이트 모드 토글 -->
+                            <Border Grid.Row="1" Padding="8,10,8,0">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Text="다크 모드" FontSize="13" FontWeight="SemiBold"
+                                        VerticalAlignment="Center" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    <Button Grid.Column="1" x:Name="ThemeToggleButton" Background="Transparent" BorderThickness="0"
+                                            Padding="0" VerticalAlignment="Center" Click="OnThemeToggleClick" CornerRadius="99999">
+                                        <Border Width="42" Height="24" CornerRadius="99999" Background="{DynamicResource ToggleTrackBrush}" Cursor="Hand">
+                                            <Border x:Name="ToggleThumb" Width="18" Height="18" CornerRadius="18"
+                                                    Background="{DynamicResource ToggleThumbBrush}" HorizontalAlignment="Left" Margin="2,0,0,0">
+                                                <Border.Transitions>
+                                                    <Transitions>
+                                                        <ThicknessTransition Property="Margin" Duration="0:0:0.15" />
+                                                    </Transitions>
+                                                </Border.Transitions>
+                                            </Border>
+                                        </Border>
+                                    </Button>
+                                </Grid>
+                            </Border>
+
+                            <!-- 계정 영역 -->
+                            <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="0,1,0,0"
+                                    Padding="8,12,8,0" Margin="0,16,0,0">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Border Width="30" Height="30" CornerRadius="15" ClipToBounds="True"
+                                            Background="{DynamicResource AvatarBgBrush}">
+                                        <Grid>
+                                            <Path x:Name="AvatarPlaceholder" Width="16" Height="16" Stretch="Uniform"
+                                                Data="M12,4 A4,4 0 1 0 12,12 A4,4 0 1 0 12,4 Z M4,20 A8,7 0 0 1 20,20"
+                                                Stroke="{DynamicResource TextSecondaryBrush}" StrokeThickness="1.4" Fill="Transparent" />
+                                            <Image x:Name="AvatarImage" Stretch="UniformToFill" IsVisible="False"
+                                                RenderOptions.BitmapInterpolationMode="None" />
+                                            <Image x:Name="AvatarHatImage" Stretch="UniformToFill" IsVisible="False" Margin="-4,0"
+                                                RenderOptions.BitmapInterpolationMode="None" />
+                                            <!-- 머리만 3D, 자동 회전 전용(드래그 불필요) 장식용 뷰 — 실패 시 위 2D 이미지로 폴백 -->
+                                            <rendering:SkinViewerControl x:Name="AvatarViewer3D" HeadOnly="True" IsVisible="False" />
+                                        </Grid>
+                                    </Border>
+                                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                                        <TextBlock x:Name="NicknameText" Text="" FontSize="12.5" FontWeight="Bold"
+                                            Foreground="{DynamicResource TextPrimaryBrush}" />
+                                        <TextBlock Text="온라인" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                        </Grid>
+                    </Border>
+
+                    <!-- 콘텐츠 -->
+                    <Grid Grid.Column="1" Margin="40,32">
+                        <views:HomeView x:Name="HomePage" />
+                        <views:SkinsView x:Name="SkinsPage" IsVisible="False" />
+                        <views:SettingsView x:Name="SettingsPage" IsVisible="False" />
+                        <views:AccountView x:Name="AccountPage" IsVisible="False" />
                     </Grid>
                 </Grid>
-
-                <!-- 플레이 버튼 -->
-                <Button Grid.Row="4" x:Name="PlayButton" Content="플레이" Margin="0,16,0,0" Height="40"
-                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                        Background="{DynamicResource AccentBrush}" Foreground="{DynamicResource AccentTextBrush}"
-                        CornerRadius="8" FontWeight="Medium" Click="OnPlayClick" />
             </Grid>
         </Grid>
     </Border>
